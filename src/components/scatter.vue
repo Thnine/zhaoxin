@@ -27,7 +27,8 @@ export default {
 
 
             const padding = 10;
-            const data = this.drawData.data;
+            const data = this.drawData['pos'];
+            const link_data = this.drawData['link'];
             let minX = Math.min(...data.map(d=>d.x));
             let maxX = Math.max(...data.map(d=>d.x));
             let minY = Math.min(...data.map(d=>d.y));
@@ -48,6 +49,23 @@ export default {
             const svg = d3.select(this.$refs['scatter-plot'])
             svg.selectAll("*").remove()
 
+            
+            //绘图
+            
+            //绘制连线
+            const links = svg.append('g')
+                .selectAll('line')
+                .data(link_data)
+                .join('line')
+                .attr("x1",d=>posXScale(data[d[0]].x))
+                .attr("y1",d=>posYScale(data[d[0]].y))
+                .attr("x2",d=>posXScale(data[d[1]].x))
+                .attr("y2",d=>posYScale(data[d[1]].y))
+                .attr('stroke','#666666')
+                .attr('stroke-width',3)
+
+
+            //绘制点
             const circles = svg.append('g')
                 .selectAll('circle')
                 .data(data)
@@ -60,7 +78,7 @@ export default {
                 .attr("cy",(d,i)=>posYScale(d.y))
                 .attr("r",5)
                 .attr("fill",'#59ca73')
-                .attr("fill-opacity",0.7)
+                // .attr("fill-opacity",0.7)
                 .attr("stroke",'green')
                 .attr("stroke-width","1px")
                 .on('mouseover',function(event,d){
